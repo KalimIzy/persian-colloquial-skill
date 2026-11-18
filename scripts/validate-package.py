@@ -57,8 +57,12 @@ def main():
 
     for rel in ("references/verb-tables.md", "references/verb-tables-full.md",
                 "references/word-pairs.md", "references/discourse-markers.md",
-                "references/chat-style.md", "examples/before-after.md",
-                "scripts/check_register.py", "data/verbs.csv",
+                "references/chat-style.md", "references/register-levels.md",
+                "references/register-decision.md",
+                "examples/before-after.md",
+                "examples/contacts.example.yaml",
+                "scripts/check_register.py", "scripts/suggest_register.py",
+                "data/verbs.csv",
                 "data/informal_words.csv", "data/verb_forms_formal.txt",
                 "data/verb_forms_informal.txt"):
         check(f"skill file {rel}", (SKILL_DIR / rel).is_file())
@@ -104,6 +108,28 @@ def main():
                   f"got {score}")
         except (json.JSONDecodeError, KeyError):
             check(f"checker runs on sample", False, proc.stderr.strip()[:200])
+
+    # Register suggester smoke tests.
+    suggester = SKILL_DIR / "scripts" / "suggest_register.py"
+    example_profile = str(SKILL_DIR / "examples" / "contacts.example.yaml")
+    suggest_cases = [
+        (["--text", "سلام چطوری؟ خوبی؟ کجایی؟"], 5),
+        (["--text", "من فردا به دانشگاه می‌روم و اگر استاد بیاید، می‌خواهم درباره پروژه با او صحبت کنم."], 1),
+        (["--audience", "teacher", "--channel", "email", "--topic", "admin"], 1),
+        (["--contact", "مامان", "--profile", example_profile], 5),
+        ([], 3),
+    ]
+    for argv, want in suggest_cases:
+        proc = subprocess.run(
+            [sys.executable, str(suggester), *argv, "--json"],
+            capture_output=True, text=True)
+        try:
+            got = json.loads(proc.stdout)["level"]
+            check(f"suggest_register {argv or ['(default)']} -> {want}",
+                  got == want, f"got {got}")
+        except (json.JSONDecodeError, KeyError):
+            check(f"suggest_register {argv}", False,
+                  proc.stderr.strip()[:200])
 
     print(f"\n{len(FAILURES)} failure(s)" if FAILURES else "\nAll checks passed.")
     return 1 if FAILURES else 0

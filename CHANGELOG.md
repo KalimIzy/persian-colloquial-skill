@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.0
+
+- The skill now chooses the register, not only converts it: five levels
+  (very formal to full colloquial) in `references/register-levels.md`,
+  with one message written at all five levels.
+- New decision engine `scripts/suggest_register.py`: mirrors the
+  incoming message, falls back to a stored contact profile, then to an
+  audience × channel matrix adjusted by topic, and reports a level,
+  a confidence, and its reasons. Precedence and confidence rules live
+  in `references/register-decision.md`.
+- Contact profiles (`examples/contacts.example.yaml`, gitignored):
+  store a level per contact and update it with `--set` when the user
+  corrects the register.
+
 ## 1.0.0
 
 - Initial release: the Colloquial Persian skill for AI agents.

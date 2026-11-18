@@ -4,3 +4,6 @@ __pycache__/
 venv/
 .DS_Store
 *.egg-info/
+
+# User data: contact register profiles (see examples/contacts.example.yaml)
+**/contacts.yaml

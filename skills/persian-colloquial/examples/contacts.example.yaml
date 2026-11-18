@@ -1,0 +1,24 @@
+# Example contacts profile for suggest_register.py
+#
+# Copy this file to contacts.yaml (next to the skill, or anywhere you
+# like) and edit it. The real file is your own data: it is gitignored
+# and never published with the skill.
+#
+# One contact per line: name, a colon, and a level 1-5 or a label.
+# Labels: very-formal, formal, semi-formal, mild-colloquial,
+# full-colloquial. Lines starting with # are comments.
+#
+#   مامان: 5
+#   استاد رضایی: 2
+#   default: 3
+#
+# The agent updates this file when you correct its register, e.g.:
+#   python scripts/suggest_register.py --set "مامان:5" --profile contacts.yaml
+
+مامان: 5
+بابا: 4
+سارا (دوست صمیمی): 5
+استاد رضایی: 2
+مدیر: 2
+همکار (علی): 3
+default: 3

@@ -1,14 +1,26 @@
 ---
 name: persian-colloquial
-description: Convert formal Persian to widely understood Tehran-based colloquial Persian and check the register of Persian text. Use when writing or rewriting Persian chat messages, captions, dialogue, or voice message transcripts in a natural spoken style, or when checking whether Persian text reads formal or colloquial.
+description: Convert formal Persian to widely understood Tehran-based colloquial Persian, choose the right register for the audience and channel, and check the register of Persian text. Use when writing or rewriting Persian chat messages, captions, dialogue, or voice message transcripts in a natural spoken style, or when checking whether Persian text reads formal or colloquial.
 license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Colloquial Persian
 
 Convert formal Persian to widely understood Tehran-based colloquial Persian, and check the register of Persian text.
+
+## Choose the register first
+
+- Before writing, decide which of the five levels in [register-levels.md](references/register-levels.md) the text needs: 1 very formal, 2 formal, 3 semi-formal, 4 mild colloquial, 5 full colloquial.
+
+- Run `scripts/suggest_register.py` with whatever you know: `--text` for the incoming message to mirror, `--audience` and `--channel` for who and where, `--topic` for what, and `--contact` with `--profile` for a stored preference. Follow the level it returns, and read its reasons.
+
+- The decision order is fixed: an explicit level beats everything, then the live message beats the stored profile, then the profile beats the audience and channel matrix, and level 3 is the default when nothing is known. See [register-decision.md](references/register-decision.md).
+
+- When confidence is below 60, confirm the register with the user if it matters, and otherwise write at level 3.
+
+- When the user corrects the register, store the correction in their profile with `scripts/suggest_register.py --set "NAME:LEVEL" --profile contacts.yaml`, so it is not repeated. The profile is the user's own data and is never published.
 
 ## Convert verbs and the copula
 

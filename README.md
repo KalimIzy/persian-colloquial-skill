@@ -18,11 +18,27 @@ Colloquial:
 
 > سلام، چطوری؟ دیروز رفتم دانشگاه، استاد گفت امتحان افتاده هفته دیگه.
 
+## Choosing the register
+
+The skill does not only convert — it decides which register fits. Five levels, from very formal to full colloquial, and a decision engine that combines the incoming message (mirroring), a stored contact profile, and an audience × channel matrix:
+
+```bash
+python skills/persian-colloquial/scripts/suggest_register.py --text "سلام چطوری؟ خوبی؟"
+python skills/persian-colloquial/scripts/suggest_register.py --audience teacher --channel email --topic admin
+python skills/persian-colloquial/scripts/suggest_register.py --contact مامان --profile contacts.yaml
+```
+
+The live message beats the stored profile, the profile beats the matrix, and level 3 (semi-formal) is the safe default when nothing is known. See `references/register-decision.md` for the full rules and `references/register-levels.md` for what each level sounds like.
+
 ## What is inside
 
 | File | What it holds |
 | --- | --- |
 | `skills/persian-colloquial/SKILL.md` | The agent skill: conversion rules, register consistency, politeness, checking |
+| `skills/persian-colloquial/references/register-levels.md` | The five register levels, with rules and one message at all five |
+| `skills/persian-colloquial/references/register-decision.md` | How the register is decided: precedence, matrix, confidence |
+| `skills/persian-colloquial/scripts/suggest_register.py` | Decision engine: mirror, profile, matrix → level + confidence |
+| `skills/persian-colloquial/examples/contacts.example.yaml` | Example contacts profile (copy to contacts.yaml, gitignored) |
 | `skills/persian-colloquial/references/verb-tables.md` | Full formal vs colloquial tables for the top 40 verbs, hand-checked |
 | `skills/persian-colloquial/references/verb-tables-full.md` | All 341 verbs with stems and colloquial present tense |
 | `skills/persian-colloquial/references/word-pairs.md` | 195+ colloquial to formal word pairs, grouped by pattern |
