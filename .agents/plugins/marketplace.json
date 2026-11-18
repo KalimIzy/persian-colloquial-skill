@@ -1,0 +1,1 @@
+{"name":"kalimizy-skills","plugins":[{"description":"Convert formal Persian to Tehran colloquial Persian and check the register of Persian text.","license":"MIT","name":"persian-colloquial","source":{"path":"./plugins/persian-colloquial"},"version":"1.0.0"}]}

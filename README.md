@@ -22,31 +22,58 @@ Colloquial:
 
 | File | What it holds |
 | --- | --- |
-| `SKILL.md` | The agent skill: conversion rules, register consistency, politeness, checking |
-| `references/verb-tables.md` | Full formal vs colloquial tables for the top 40 verbs, hand-checked |
-| `references/verb-tables-full.md` | All 341 verbs with stems and colloquial present tense |
-| `references/word-pairs.md` | 195+ colloquial to formal word pairs, grouped by pattern |
-| `references/discourse-markers.md` | خب, دیگه, آخه, که, بابا, والا and more, with function and examples |
-| `references/chat-style.md` | Chat conventions: short sentences, Finglish, spelling variation |
-| `examples/before-after.md` | 8 worked conversions, plus a mixed-register bad example with fixes |
-| `scripts/check_register.py` | Stdlib-only register checker: scores any Persian text 0 to 100 |
-| `data/verbs.csv` | All verb stems (source: shekar) |
-| `data/informal_words.csv` | Informal word list (source: shekar) |
-| `data/verb_forms_formal.txt` | 20,241 generated formal verb forms |
-| `data/verb_forms_informal.txt` | 17,905 generated colloquial verb forms |
+| `skills/persian-colloquial/SKILL.md` | The agent skill: conversion rules, register consistency, politeness, checking |
+| `skills/persian-colloquial/references/verb-tables.md` | Full formal vs colloquial tables for the top 40 verbs, hand-checked |
+| `skills/persian-colloquial/references/verb-tables-full.md` | All 341 verbs with stems and colloquial present tense |
+| `skills/persian-colloquial/references/word-pairs.md` | 195+ colloquial to formal word pairs, grouped by pattern |
+| `skills/persian-colloquial/references/discourse-markers.md` | خب, دیگه, آخه, که, بابا, والا and more, with function and examples |
+| `skills/persian-colloquial/references/chat-style.md` | Chat conventions: short sentences, Finglish, spelling variation |
+| `skills/persian-colloquial/examples/before-after.md` | 8 worked conversions, plus a mixed-register bad example with fixes |
+| `skills/persian-colloquial/scripts/check_register.py` | Stdlib-only register checker: scores any Persian text 0 to 100 |
+| `skills/persian-colloquial/data/verbs.csv` | All verb stems (source: shekar) |
+| `skills/persian-colloquial/data/informal_words.csv` | Informal word list (source: shekar) |
+| `skills/persian-colloquial/data/verb_forms_formal.txt` | 20,241 generated formal verb forms |
+| `skills/persian-colloquial/data/verb_forms_informal.txt` | 17,905 generated colloquial verb forms |
 
 ## Install
 
-**Claude Code / any agent that reads skills:** copy `SKILL.md` (and `references/`, `scripts/`, `data/`) into your skills folder.
+This repo follows the [Agent Skills open standard](https://agentskills.io): one skill at `skills/persian-colloquial/`, with manifests for the Claude Code, Cursor, and Codex plugin systems.
 
-**Muse:** this repo is also a Muse custom skill. Copy the whole folder to `~/workspace/custom-skills/persian_colloquial/`.
+**Any agent (recommended):** the `skills` CLI installs it into the right folder for whichever agent you use.
+
+```bash
+npx skills add KalimIzy/persian-colloquial-skill
+```
+
+**GitHub CLI:**
+
+```bash
+gh skill install KalimIzy/persian-colloquial-skill
+```
+
+**Claude Code plugin:**
+
+```
+/plugin marketplace add KalimIzy/persian-colloquial-skill
+/plugin install persian-colloquial@persian-colloquial
+```
+
+**Codex plugin:**
+
+```bash
+codex plugin marketplace add KalimIzy/persian-colloquial-skill
+```
+
+**Manual:** copy `skills/persian-colloquial/` into your agent's skills folder (e.g. `~/.claude/skills/`).
+
+**Muse:** copy `skills/persian-colloquial/` to `~/workspace/custom-skills/persian_colloquial/`.
 
 **Register checker only:** no install needed, Python 3.9+ and nothing else.
 
 ```bash
-python scripts/check_register.py --text "نمی‌دونم اونا می‌تونن این مشکلو حل کنن یا نه."
-python scripts/check_register.py message.txt
-python scripts/check_register.py --text "..." --json
+python skills/persian-colloquial/scripts/check_register.py --text "نمی‌دونم اونا می‌تونن این مشکلو حل کنن یا نه."
+python skills/persian-colloquial/scripts/check_register.py message.txt
+python skills/persian-colloquial/scripts/check_register.py --text "..." --json
 ```
 
 ## The register scale
