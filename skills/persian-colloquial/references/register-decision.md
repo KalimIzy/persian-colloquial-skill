@@ -1,27 +1,43 @@
 # How the register is decided
 
 `suggest_register.py` picks one of the five levels in
-[register-levels.md](register-levels.md). It combines four signals in a
+[register-levels.md](register-levels.md). It combines five signals in a
 fixed order, so the decision is a rule, not a guess.
 
 ## Precedence
 
 1. **Explicit `--level`** — the user overrides everything.
-2. **Mirroring** — the register of the incoming message, scored by
+2. **Deliverable type (`--deliverable`)** — when the user asks for an
+   artifact, the artifact decides, not the tone of the request. A
+   casual «یه پروپوزال واسه مشتری بنویس» still needs a formal
+   proposal. Mirroring applies to replies, not artifacts.
+3. **Mirroring** — the register of the incoming message, scored by
    `check_register.py`. A live message beats a stored default: if
    someone who usually writes casually sends a formal message, answer
    formally this time.
-3. **Contact profile** — the stored level for that contact
+4. **Contact profile** — the stored level for that contact
    (`contacts.yaml`, see `examples/contacts.example.yaml`). Used when
    there is no incoming message, e.g. when starting a conversation.
-4. **Audience × channel matrix**, adjusted by topic — the generic prior
+5. **Audience × channel matrix**, adjusted by topic — the generic prior
    when nothing specific is known.
-5. **Default level 3** (semi-formal) when nothing at all is known. It
+6. **Default level 3** (semi-formal) when nothing at all is known. It
    is the safest choice: polite, and never wrong by much.
 
 Mirroring only counts when the incoming message has at least two
 register markers. A message with no markers (e.g. «باشه») carries no
 signal and the decision falls through to the profile or the matrix.
+
+## Deliverable types
+
+| Deliverable | Level | Why |
+| --- | --- | --- |
+| admin-letter, thesis | 1 | Official and academic writing |
+| proposal, letter, email, report, essay | 2 | Formal documents |
+| caption, post, ad | 4 | Social writing is colloquial and warm |
+| story | 5 | Stories are spoken-style |
+
+A deliverable outranks mirroring even when they disagree by two levels
+or more; the script reports the disagreement.
 
 ## Score to level (mirroring)
 
@@ -63,6 +79,7 @@ Levels are clamped to 1–5 after all adjustments.
 ## Confidence
 
 - Explicit level: 100.
+- Deliverable: 85.
 - Mirroring: 75–90, higher with more markers. Drops by 10 when the
   live message disagrees with the stored profile by two levels or more
   (the script still follows the live message and says so).
@@ -107,3 +124,14 @@ relationship.
 **4. Nothing known.**
 No text, no audience, no contact. Level 3, confidence 50, with a note
 to confirm when it matters.
+
+**5. Casual request for a proposal.**
+`--text "یه پروپوزال واسه مشتری بنویس" --deliverable proposal`
+The request tone is colloquial (level 5), but the deliverable is a
+proposal, so the answer is level 2 with confidence 85. The script
+reports that the deliverable outranked the tone.
+
+**6. Colloquial message plus an admin letter.**
+`--text "سلام چطوری؟ خوبی؟" --deliverable admin-letter`
+The mirror says 5, the deliverable says 1. The deliverable wins with
+confidence 85, and the disagreement is reported.

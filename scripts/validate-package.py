@@ -59,6 +59,7 @@ def main():
                 "references/word-pairs.md", "references/discourse-markers.md",
                 "references/chat-style.md", "references/register-levels.md",
                 "references/register-decision.md",
+                "references/orthography.md", "references/ai-tells.md",
                 "examples/before-after.md",
                 "examples/contacts.example.yaml",
                 "scripts/check_register.py", "scripts/suggest_register.py",
@@ -117,6 +118,8 @@ def main():
         (["--text", "من فردا به دانشگاه می‌روم و اگر استاد بیاید، می‌خواهم درباره پروژه با او صحبت کنم."], 1),
         (["--audience", "teacher", "--channel", "email", "--topic", "admin"], 1),
         (["--contact", "مامان", "--profile", example_profile], 5),
+        (["--text", "یه پروپوزال واسه مشتری بنویس",
+          "--deliverable", "proposal"], 2),
         ([], 3),
     ]
     for argv, want in suggest_cases:
@@ -130,6 +133,35 @@ def main():
         except (json.JSONDecodeError, KeyError):
             check(f"suggest_register {argv}", False,
                   proc.stderr.strip()[:200])
+
+    # Evals: runnable cases in evals/evals.json.
+    evals_path = ROOT / "evals" / "evals.json"
+    check("evals/evals.json exists", evals_path.is_file())
+    if evals_path.is_file():
+        for case in json.loads(evals_path.read_text(encoding="utf-8")):
+            if case["kind"] == "suggest":
+                proc = subprocess.run(
+                    [sys.executable, str(suggester), *case["args"], "--json"],
+                    capture_output=True, text=True)
+                try:
+                    got = json.loads(proc.stdout)["level"]
+                    check(f"eval {case['id']} -> {case['expect_level']}",
+                          got == case["expect_level"], f"got {got}")
+                except (json.JSONDecodeError, KeyError):
+                    check(f"eval {case['id']}", False,
+                          proc.stderr.strip()[:200])
+            elif case["kind"] == "check":
+                proc = subprocess.run(
+                    [sys.executable, str(checker), "--text", case["text"],
+                     "--json"], capture_output=True, text=True)
+                try:
+                    kinds = [i["kind"] for i in
+                             json.loads(proc.stdout)["issues"]]
+                    check(f"eval {case['id']} flags {case['expect_issue']}",
+                          case["expect_issue"] in kinds, f"got {kinds}")
+                except (json.JSONDecodeError, KeyError):
+                    check(f"eval {case['id']}", False,
+                          proc.stderr.strip()[:200])
 
     print(f"\n{len(FAILURES)} failure(s)" if FAILURES else "\nAll checks passed.")
     return 1 if FAILURES else 0

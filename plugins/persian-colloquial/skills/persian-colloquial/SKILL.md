@@ -3,7 +3,7 @@ name: persian-colloquial
 description: Convert formal Persian to widely understood Tehran-based colloquial Persian, choose the right register for the audience and channel, and check the register of Persian text. Use when writing or rewriting Persian chat messages, captions, dialogue, or voice message transcripts in a natural spoken style, or when checking whether Persian text reads formal or colloquial.
 license: MIT
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Colloquial Persian
@@ -16,7 +16,9 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 - Run `scripts/suggest_register.py` with whatever you know: `--text` for the incoming message to mirror, `--audience` and `--channel` for who and where, `--topic` for what, and `--contact` with `--profile` for a stored preference. Follow the level it returns, and read its reasons.
 
-- The decision order is fixed: an explicit level beats everything, then the live message beats the stored profile, then the profile beats the audience and channel matrix, and level 3 is the default when nothing is known. See [register-decision.md](references/register-decision.md).
+- When the user asks for an artifact (a proposal, a letter, a caption), pass `--deliverable` and classify the artifact, not the tone of the request: a casual «یه پروپوزال بنویس» still needs a formal proposal. Mirroring applies to replies, not artifacts.
+
+- The decision order is fixed: an explicit level beats everything, then the deliverable type, then the live message beats the stored profile, then the profile beats the audience and channel matrix, and level 3 is the default when nothing is known. See [register-decision.md](references/register-decision.md).
 
 - When confidence is below 60, confirm the register with the user if it matters, and otherwise write at level 3.
 
@@ -56,7 +58,7 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 - Apply the ā to u vowel shift only to the frequent words that actually show it, such as خونه for خانه and نون for نان, and never change every ا to و.
 
-- Shorten adverbs ending in اً by replacing the ending with ن, as in کلن for کلا and دقیقن for دقیقا.
+- Shorten adverbs ending in اً by replacing the ending with ن, as in کلن for کلاً and دقیقن for دقیقاً. The formal forms carry tanvin (کلاً, دقیقاً), not کلا and دقیقا.
 
 - Use آره for yes and نه for no in speech, and keep بله for polite or formal address.
 
@@ -78,11 +80,25 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 - Match the script the user writes in, using Finglish only when they do, and use Persian script otherwise.
 
+## Keep the spelling correct
+
+- Follow [orthography.md](references/orthography.md) at every level: ZWNJ, Persian ی and ک, Persian digits and punctuation, tanvin rules, and the هکسره test.
+
+- Never write an em dash or en dash in Persian text at any level; use ، or start a new sentence.
+
+- Never write the ezafe kasre as ـه: «کتابِ من», not «کتابه من». Test by substituting است: if the sentence breaks, it needs a kasre, not ـه.
+
+- Check the text against [ai-tells.md](references/ai-tells.md) before delivering: no می‌باشد, no در نهایت می‌توان گفت, no rule-of-three triads, no نه تنها ... بلکه.
+
+- Do not start a line, bullet, or heading with a Latin word in Persian text; lead with a Persian word so the line renders right-to-left.
+
 ## Keep register and politeness consistent
 
 - Pick one level of formality for the whole text and keep it, since mixing اگه with دارید in one sentence sounds uncertain.
 
 - Keep شما and plural verb endings for polite address, and use colloquial verbs with them, as in شما می‌خواین, since politeness is not the same as formality.
+
+- Do not repeat شما when the verb already carries the person: «می‌توانید فایل را حذف کنید», not «شما می‌توانید فایل را حذف کنید». Repeated شما reads as translated English.
 
 - Use تو and singular verbs only with friends, family, and peers, and switch to شما with strangers, older people, and customers.
 

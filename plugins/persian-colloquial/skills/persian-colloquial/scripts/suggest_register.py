@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """Suggest the right register for a Persian reply.
 
-Decision engine for the persian-colloquial skill. It combines four
+Decision engine for the persian-colloquial skill. It combines five
 signals in a fixed precedence order:
 
 1. Explicit --level (the user overrides everything).
-2. Mirroring: the register of the incoming message (--text), scored with
-   check_register.py. A live message beats a stored default.
-3. Contact profile: the stored level for --contact (--profile file).
-4. Audience x channel matrix, adjusted by topic.
+2. Deliverable type (--deliverable): when the user asks for an
+   artifact, the artifact decides, not the tone of the request. A
+   casual «یه پروپوزال بنویس» still needs a formal proposal.
+3. Mirroring: the register of the incoming message (--text), scored with
+   check_register.py. A live message beats a stored default. Mirroring
+   applies to replies, not artifacts.
+4. Contact profile: the stored level for --contact (--profile file).
+5. Audience x channel matrix, adjusted by topic.
 
 Falls back to level 3 (semi-formal, the safest) when nothing is known.
 
@@ -89,6 +93,22 @@ TOPIC_MODIFIER = {
     "catch-up": 1,
 }
 
+# Deliverable types: the artifact decides the register, not the tone
+# of the request. Outranks mirroring; see register-decision.md.
+DELIVERABLE_LEVEL = {
+    "admin-letter": 1,
+    "thesis": 1,
+    "proposal": 2,
+    "letter": 2,
+    "email": 2,
+    "report": 2,
+    "essay": 2,
+    "caption": 4,
+    "post": 4,
+    "ad": 4,
+    "story": 5,
+}
+
 # Score bands from check_register.py mapped to levels.
 MIRROR_BANDS = [(20, 1), (40, 2), (60, 3), (80, 4), (100, 5)]
 
@@ -160,7 +180,8 @@ def set_profile_level(path, name, level):
 
 
 def suggest(text=None, audience=None, channel=None, topic=None,
-            contact=None, profile_path=None, explicit_level=None):
+            contact=None, profile_path=None, explicit_level=None,
+            deliverable=None):
     """Decide a register level. Returns a dict with level, confidence,
     source and reasons."""
     reasons = []
@@ -201,6 +222,20 @@ def suggest(text=None, audience=None, channel=None, topic=None,
         else:
             reasons.append("incoming message has no register markers; "
                            "ignoring it")
+
+    if deliverable in DELIVERABLE_LEVEL:
+        level = DELIVERABLE_LEVEL[deliverable]
+        reasons.append(
+            f"deliverable {deliverable} needs level {level} "
+            f"({LEVELS[level][0]}); the artifact decides, not the "
+            f"request tone")
+        if mirror_level is not None and abs(mirror_level - level) >= 2:
+            reasons.append(
+                f"request tone suggests level {mirror_level}, but the "
+                f"deliverable outranks mirroring")
+        return {"level": level, "confidence": 85,
+                "source": "deliverable", "reasons": reasons,
+                "mirror": mirror}
 
     if mirror_level is not None:
         confidence = 90 if mirror["markers"] >= 6 else (
@@ -273,6 +308,8 @@ def main(argv=None):
                         help="where the reply goes")
     parser.add_argument("--topic", choices=sorted(TOPIC_MODIFIER),
                         help="what the reply is about")
+    parser.add_argument("--deliverable", choices=sorted(DELIVERABLE_LEVEL),
+                        help="artifact being written (outranks mirroring)")
     parser.add_argument("--contact", help="contact name to look up")
     parser.add_argument("--profile", help="contacts profile file")
     parser.add_argument("--level", type=int, choices=[1, 2, 3, 4, 5],
@@ -300,7 +337,8 @@ def main(argv=None):
     result = suggest(text=args.text, audience=args.audience,
                      channel=args.channel, topic=args.topic,
                      contact=args.contact, profile_path=args.profile,
-                     explicit_level=args.level)
+                     explicit_level=args.level,
+                     deliverable=args.deliverable)
     if args.json:
         out = dict(result)
         out["label"], out["label_fa"] = LEVELS[result["level"]]

@@ -26,9 +26,10 @@ The skill does not only convert — it decides which register fits. Five levels,
 python skills/persian-colloquial/scripts/suggest_register.py --text "سلام چطوری؟ خوبی؟"
 python skills/persian-colloquial/scripts/suggest_register.py --audience teacher --channel email --topic admin
 python skills/persian-colloquial/scripts/suggest_register.py --contact مامان --profile contacts.yaml
+python skills/persian-colloquial/scripts/suggest_register.py --text "یه پروپوزال واسه مشتری بنویس" --deliverable proposal
 ```
 
-The live message beats the stored profile, the profile beats the matrix, and level 3 (semi-formal) is the safe default when nothing is known. See `references/register-decision.md` for the full rules and `references/register-levels.md` for what each level sounds like.
+The deliverable type beats the request tone (a casual request for a proposal still needs a formal proposal); the live message beats the stored profile, the profile beats the matrix, and level 3 (semi-formal) is the safe default when nothing is known. See `references/register-decision.md` for the full rules and `references/register-levels.md` for what each level sounds like.
 
 ## What is inside
 
@@ -37,6 +38,8 @@ The live message beats the stored profile, the profile beats the matrix, and lev
 | `skills/persian-colloquial/SKILL.md` | The agent skill: conversion rules, register consistency, politeness, checking |
 | `skills/persian-colloquial/references/register-levels.md` | The five register levels, with rules and one message at all five |
 | `skills/persian-colloquial/references/register-decision.md` | How the register is decided: precedence, matrix, confidence |
+| `skills/persian-colloquial/references/orthography.md` | ZWNJ, Persian characters, digits, punctuation, هکسره, tanvin |
+| `skills/persian-colloquial/references/ai-tells.md` | Bureaucratic and AI tells in Persian, with fixes |
 | `skills/persian-colloquial/scripts/suggest_register.py` | Decision engine: mirror, profile, matrix → level + confidence |
 | `skills/persian-colloquial/examples/contacts.example.yaml` | Example contacts profile (copy to contacts.yaml, gitignored) |
 | `skills/persian-colloquial/references/verb-tables.md` | Full formal vs colloquial tables for the top 40 verbs, hand-checked |
@@ -118,6 +121,7 @@ The checker counts colloquial markers (informal verb forms, informal words, disc
 ## Sources and credits
 
 - [shekar](https://github.com/amirivojdan/shekar) (MIT) — verb stems, informal word list, conjugator, and the rule-based informal classifier this checker builds on.
+- [persian-writing](https://github.com/ali2000hos/persian-writing) (MIT) — هکسره rules and the است-test, AI-tell patterns, orthography rules, and the deliverable-type register rule, adapted from its references.
 - [Persian-Informal-Text-Detector](https://github.com/MahtaFetrat/Persian-Informal-Text-Detector) — informal word list and verb-pattern regexes.
 - [Degarbayan-SC](https://github.com/mut-deep/Degarbayan-SC) — 1.5M colloquial paraphrase pairs from movie subtitles.
 - [LSCP](https://iasbs.ac.ir/~ansari/lscp/) — Large-Scale Colloquial Persian, 120M sentences from 27M casual tweets.

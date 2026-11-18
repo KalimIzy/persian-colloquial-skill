@@ -16,11 +16,18 @@ Usage:
     python check_register.py --text "سلام، چطوری؟ دیروز رفتم دانشگاه."
     python check_register.py message.txt
     python check_register.py --text "..." --json
+    python check_register.py --text "..." --rhythm
     cat message.txt | python check_register.py
+
+Besides the score, the checker reports mechanical issues: em/en dashes,
+Arabic ي/ك, Latin punctuation inside Persian text, missing or fake
+tanvin, probable هکسره (ezafe written as ـه), bureaucratic verbs, and
+missing ZWNJ. See references/orthography.md for the rules.
 """
 import argparse
 import json
 import re
+import statistics
 import sys
 from pathlib import Path
 
@@ -58,6 +65,36 @@ FORMAL_WORDS = {
     "می‌باشند", "گردد", "می‌گردد", "زیرا", "بله", "آن‌ها", "ایشان",
     "خواهد", "خواهم", "خواهی", "خواهیم", "خواهید", "خواهند", "بسیار",
     "لذا", "بنابراین", "همچنین",
+}
+
+# Words that need tanvin in formal writing (missing-tanvin check).
+MISSING_TANVIN = {
+    "لطفا": "لطفاً", "حتما": "حتماً", "واقعا": "واقعاً",
+    "قطعا": "قطعاً", "اصلا": "اصلاً", "کاملا": "کاملاً",
+    "دقیقا": "دقیقاً", "کلا": "کلاً", "قبلا": "قبلاً",
+    "بعدا": "بعداً", "فعلا": "فعلاً", "مثلا": "مثلاً",
+    "احتمالا": "احتمالاً", "معمولا": "معمولاً",
+}
+
+# Fake tanvin on Persian words (checked against the surface form,
+# because normalize() strips the tanvin diacritic).
+FAKE_TANVIN = {
+    "گاهاً": "گاهی", "دوماً": "دوم اینکه",
+    "سوماً": "سوم اینکه", "ناچاراً": "به‌ناچار",
+}
+
+# Bureaucratic verbs (normalized forms, ZWNJ removed): use است/می‌شود/شد.
+BUREAUCRATIC_VERBS = {
+    "میباشد": "است", "میباشند": "هستند",
+    "میگردد": "می‌شود", "میگردند": "می‌شوند",
+    "گردد": "شود", "گردند": "شوند", "گردید": "شد",
+}
+
+# Common words that genuinely end in ه: «خونه من» is not هکسره.
+HEKASRE_STOPLIST = {
+    "خونه", "خانه", "مدرسه", "نامه", "جاده", "پنجره", "بچه",
+    "گربه", "سکه", "دونه", "چرخه", "لحظه", "هفته", "دقیقه",
+    "ثانیه", "قفسه", "کاسه", "بشقابه",
 }
 
 # Common words that collide with verb stems (نه is also the present stem
@@ -198,7 +235,64 @@ class RegisterChecker:
             "verdict": verdict,
             "colloquial_spans": colloquial,
             "formal_spans": formal,
+            "issues": self._issues(text, tokens),
         }
+
+    def _issues(self, text, tokens):
+        """Mechanical issues: orthography problems the score ignores.
+
+        Each issue is {"kind", "text", "suggestion"}. See
+        references/orthography.md and references/ai-tells.md.
+        """
+        issues = []
+
+        def add(kind, found, suggestion):
+            issues.append({"kind": kind, "text": found,
+                           "suggestion": suggestion})
+
+        for m in re.finditer(r"[—–]", text):
+            add("dash", m.group(0),
+                "use ، or start a new sentence; dashes are an AI tell")
+        for m in re.finditer(r"(?<![\w\u200c])(می|نمی) ", text):
+            add("zwnj-mi", m.group(0).strip(),
+                "join the prefix with ZWNJ: می‌روم, not می روم")
+        for m in re.finditer(r"(\S+)\s+ها(?![\w\u200c])", text):
+            add("zwnj-ha", m.group(0),
+                "join with ZWNJ: کتاب‌ها (ignore if ها is the emphasis "
+                "particle, as in بیا ها)")
+        for m in re.finditer(
+                r"(\S{3,}ه)\s+(من|تو|او|ما|شما|آنها|ایشان|این|آن)\b", text):
+            word = m.group(1)
+            if word not in HEKASRE_STOPLIST and not word.endswith("انه"):
+                add("hekasre", m.group(0),
+                    "probable هکسره: ezafe is a kasre, not ـه — test by "
+                    "substituting است")
+        for m in re.finditer(
+                r"[\u0600-\u06FF]\s*[,;?]|[,;?]\s*[\u0600-\u06FF]", text):
+            add("latin-punct", m.group(0).strip(),
+                "use Persian punctuation: ، ؛ ؟")
+        for surface, _start, _end in tokens:
+            token = normalize(surface)
+            if "ي" in surface or "ك" in surface:
+                add("arabic-char", surface,
+                    "use Persian ی and ک, not Arabic ي and ك")
+            if token in MISSING_TANVIN:
+                add("missing-tanvin", surface,
+                    f"use {MISSING_TANVIN[token]}")
+            if surface in FAKE_TANVIN:
+                add("fake-tanvin", surface,
+                    f"use {FAKE_TANVIN[surface]}")
+            if token in BUREAUCRATIC_VERBS:
+                add("bureaucratic-verb", surface,
+                    f"use {BUREAUCRATIC_VERBS[token]}")
+        seen = set()
+        unique = []
+        for issue in issues:
+            key = (issue["kind"], issue["text"])
+            if key not in seen:
+                seen.add(key)
+                unique.append(issue)
+        return unique
 
     def _classify(self, token):
         if token in self.informal_words or token in self.informal_verbs:
@@ -242,7 +336,47 @@ def report(result, text):
         lines.append("Formal spans:")
         for surface, kind in result["formal_spans"]:
             lines.append("  - %s (%s)" % (surface, kind))
+    if result["issues"]:
+        lines.append("")
+        lines.append("Issues:")
+        for issue in result["issues"]:
+            lines.append("  - %s: %s (%s)" % (
+                issue["kind"], issue["text"], issue["suggestion"]))
     return "\n".join(lines)
+
+
+def rhythm_report(text):
+    """Flag flat rhythm: uniform sentence length and repeated openings.
+
+    A secondary signal; lexical tells matter far more. Returns lines.
+    """
+    sentences = [s.strip() for s in re.split(r"[.؟!…\n]+", text) if s.strip()]
+    lengths = [len(s.split()) for s in sentences]
+    lines = ["", "Rhythm:"]
+    if len(sentences) < 4:
+        lines.append("  too few sentences to judge rhythm")
+        return lines
+    mean = statistics.fmean(lengths)
+    cv = statistics.pstdev(lengths) / mean if mean else 0
+    lines.append("  sentences: %d, mean length: %.1f words, CV: %.2f"
+                 % (len(sentences), mean, cv))
+    if cv < 0.35:
+        lines.append("  - flat rhythm: sentence lengths are too uniform "
+                     "(CV < 0.35); vary them")
+    if min(lengths) >= 8:
+        lines.append("  - no short sentence: add one under 8 words")
+    openings = {}
+    for s in sentences:
+        first = s.split()[0] if s.split() else ""
+        openings[first] = openings.get(first, 0) + 1
+    repeated = {w: n for w, n in openings.items() if n >= 3}
+    if repeated:
+        lines.append("  - repeated openings: %s"
+                     % ", ".join("%s (x%d)" % (w, n)
+                                 for w, n in repeated.items()))
+    if len(lines) == 2:
+        lines.append("  ok")
+    return lines
 
 
 def main(argv=None):
@@ -253,6 +387,8 @@ def main(argv=None):
     parser.add_argument("--text", help="text to check directly")
     parser.add_argument("--json", action="store_true",
                         help="print the result as JSON")
+    parser.add_argument("--rhythm", action="store_true",
+                        help="also report on sentence rhythm")
     args = parser.parse_args(argv)
 
     if args.text is not None:
@@ -270,9 +406,14 @@ def main(argv=None):
             {"text": s, "kind": k} for s, k in result["colloquial_spans"]]
         out["formal_spans"] = [
             {"text": s, "kind": k} for s, k in result["formal_spans"]]
+        if args.rhythm:
+            out["rhythm"] = rhythm_report(text)
         print(json.dumps(out, ensure_ascii=False, indent=2))
     else:
-        print(report(result, text))
+        output = report(result, text)
+        if args.rhythm:
+            output += "\n" + "\n".join(rhythm_report(text))
+        print(output)
     return 0
 
 
