@@ -116,6 +116,8 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 - Run `scripts/check_register.py` on the converted text before sending it, passing the text with `--text` or a file path. Pass `--register` with the target level (1-5) when you know it: at levels 4-5 the checker skips the missing-tanvin check, since colloquial writing does not use tanvin.
 
+- For mixed Persian and English text, follow [bidi.md](references/bidi.md): lead every line with a Persian word, never end a sentence with a Latin word or URL, and put URLs on their own line. The checker flags the mechanical breakages (latin-line-start, trailing-latin-punct, url-punct, latin-paren).
+
 - Read the colloquial score and the verdict, and expect a friendly chat message to score above 55 and a formal text to score below 35. Scores from fewer than 4 markers are shrunk toward 50 and labeled a weak signal, so read the marker counts too: one colloquial word in a long formal text is not a colloquial text.
 
 - Fix the flagged formal spans the script lists, then run the script again until the score matches the target register.

@@ -27,4 +27,10 @@
   matching real usage: wordfreq data (November 2026) shows میرم
   outnumbers می‌رم by about 30 to 1. The ZWNJ form remains the
   careful variant for edited text; the checker accepts both.
+- Bidirectional-text guidance (`references/bidi.md`) with wrong/right
+  examples for mixed Persian and English: line-leading Latin words,
+  trailing punctuation, URLs, numbers, parentheses, lists, code, and
+  emoji. The checker flags the mechanical breakages
+  (latin-line-start, trailing-latin-punct, url-punct, latin-paren),
+  and evals grew to 38 cases.
 - Packaged to the Agent Skills open standard: YAML frontmatter, `skills/persian-colloquial/` layout, Claude Code and Cursor plugin manifests, Codex marketplace copy, and a CI validation workflow.

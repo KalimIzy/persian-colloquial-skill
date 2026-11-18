@@ -23,8 +23,10 @@ Usage:
 Besides the score, the checker reports mechanical issues: em/en dashes,
 Arabic ي/ك, Latin punctuation inside Persian text, missing or fake
 tanvin, probable هکسره (ezafe written as ـه), bureaucratic verbs,
-missing ZWNJ, and fixed AI-tell phrases. See references/orthography.md
-for the rules.
+missing ZWNJ, fixed AI-tell phrases, and bidirectional-text problems
+(a line starting with a Latin word, punctuation after a Latin run or
+URL, Latin inside parentheses). See references/orthography.md and
+references/bidi.md for the rules.
 
 Scores from fewer than 4 markers are shrunk toward 50 and labeled a
 weak signal: one colloquial word in a long formal text is not a
@@ -341,7 +343,8 @@ class RegisterChecker:
         """Mechanical issues: orthography problems the score ignores.
 
         Each issue is {"kind", "text", "suggestion"}. See
-        references/orthography.md and references/ai-tells.md.
+        references/orthography.md, references/ai-tells.md, and
+        references/bidi.md.
         `register` is the target level (1-5) when known: at levels 4-5
         the missing-tanvin check is skipped, and the ها suggestion
         points at the colloquial short form.
@@ -430,6 +433,85 @@ class RegisterChecker:
             if token in BUREAUCRATIC_VERBS:
                 add("bureaucratic-verb", surface,
                     f"use {BUREAUCRATIC_VERBS[token]}")
+        # Bidirectional text: only when the text is actually mixed
+        # Persian + Latin. See references/bidi.md.
+        if re.search(r"[\u0600-\u06FF]", text):
+            rlm = "\u200f"   # right-to-left mark
+            pdi = "\u2069"   # pop directional isolate
+            in_fence = False
+            for line in text.splitlines():
+                stripped = line.strip()
+                if stripped.startswith("```"):
+                    in_fence = not in_fence
+                    continue
+                if in_fence:
+                    continue
+                # A line starting with a Latin word renders
+                # left-to-right: strip list markers first.
+                lead = re.sub(r"^(\s*([-*+>#]|\d+[.)])\s*)+", "", line)
+                if (re.match(r"[A-Za-z]", lead)
+                        and re.search(r"[\u0600-\u06FF]", line)):
+                    add("latin-line-start", lead.strip()[:60],
+                        "lead with a Persian word so the line renders "
+                        "right-to-left")
+                # Latin inside parentheses mirrors in RTL text.
+                for m in re.finditer(r"\([A-Za-z][^)]*\)", line):
+                    add("latin-paren", m.group(0),
+                        "parentheses around Latin text mirror in RTL: "
+                        "use «» quotes or an RLM (U+200F) before the "
+                        "opening paren")
+            # A Latin word or number at the end of a Persian sentence
+            # pulls the trailing punctuation to the wrong side.
+            # Sentence-final means end of text, a newline, or a new
+            # Persian sentence: this skips abbreviations (e.g.) and
+            # decimals (3.5), which are followed by Latin or digits.
+            abbreviations = {"e.g", "i.e", "etc", "vs", "dr", "mr",
+                             "mrs", "ms", "st"}
+            url_pattern = (r"https?://\S+|www\.\S+|"
+                           r"[\w.+-]+@[\w-]+\.[\w.]+")
+            url_spans = [(m.start(), m.end()) for m in
+                         re.finditer(url_pattern, text)]
+            for m in re.finditer(
+                    r"[A-Za-z][A-Za-z0-9._-]*[.!?]|[0-9][.!?]", text):
+                word = m.group(0)[:-1].lower()
+                if word in abbreviations:
+                    continue
+                if any(s <= m.start() < e for s, e in url_spans):
+                    continue  # the url-punct check covers URLs
+                after = text[m.end():]
+                if not (after == "" or after.startswith("\n")
+                        or re.match(r"\s+[\u0600-\u06FF]", after)):
+                    continue
+                line_start = text.rfind("\n", 0, m.start()) + 1
+                if not re.search(r"[\u0600-\u06FF]",
+                                 text[line_start:m.start()]):
+                    continue
+                add("trailing-latin-punct", m.group(0),
+                    "a Latin word or number at the end of a Persian "
+                    "sentence pulls the punctuation to the wrong side: "
+                    "end with a Persian word, use Persian punctuation "
+                    "(۔ ؟), or add an RLM (U+200F) after it")
+            # A URL or email with punctuation right after it: the
+            # punctuation jumps or joins the link. An RLM or PDI
+            # after the URL fixes it. A URL alone on its own line is
+            # fine and is not flagged.
+            for m in re.finditer(url_pattern, text):
+                url = m.group(0)
+                after = text[m.end():m.end() + 1]
+                if after in (rlm, pdi):
+                    continue
+                if url[-1] in ".!?،؟":
+                    add("url-punct", url,
+                        "never put punctuation directly after a URL: "
+                        "put the URL on its own line or add an RLM "
+                        "(U+200F) after it")
+                elif after in ("", "\n"):
+                    line_start = text.rfind("\n", 0, m.start()) + 1
+                    if re.search(r"[\u0600-\u06FF]",
+                                 text[line_start:m.start()]):
+                        add("url-punct", url,
+                            "a URL at the end of a Persian line needs "
+                            "an RLM (U+200F) after it, or its own line")
         seen = set()
         unique = []
         for issue in issues:

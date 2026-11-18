@@ -96,4 +96,7 @@ with a Persian word instead:
 - «Docker را نصب کنید.» → «ابزار Docker را نصب کنید.»
 
 This covers every sentence, bullet, heading, table cell, and caption,
-and matters most in captions and posts that name brands or apps.
+and matters most in captions and posts that name brands or apps. See
+[bidi.md](bidi.md) for the full treatment of mixed Persian and English
+text: trailing punctuation, URLs, numbers, parentheses, lists, code,
+and emoji.

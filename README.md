@@ -39,6 +39,7 @@ The deliverable type beats the request tone (a casual request for a proposal sti
 | `skills/persian-colloquial/references/register-levels.md` | The five register levels, with rules and one message at all five |
 | `skills/persian-colloquial/references/register-decision.md` | How the register is decided: precedence, matrix, confidence |
 | `skills/persian-colloquial/references/orthography.md` | ZWNJ, Persian characters, digits, punctuation, هکسره, tanvin |
+| `skills/persian-colloquial/references/bidi.md` | Mixed Persian and English text: direction, URLs, numbers, parentheses, code, emoji |
 | `skills/persian-colloquial/references/ai-tells.md` | Bureaucratic and AI tells in Persian, with fixes |
 | `skills/persian-colloquial/scripts/suggest_register.py` | Decision engine: mirror, profile, matrix → level + confidence |
 | `skills/persian-colloquial/examples/contacts.example.yaml` | Example contacts profile (copy to contacts.yaml, gitignored) |
