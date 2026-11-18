@@ -10,6 +10,7 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -55,6 +56,23 @@ def main():
     check("body under 500 lines", body.count("\n") < 500,
           f"lines={body.count(chr(10))}")
 
+    # Every version string in the repo must match the skill version.
+    version_match = re.search(
+        r'metadata:\s*\n\s+version:\s*"([^"]+)"', text)
+    skill_version = version_match.group(1) if version_match else None
+    check("skill version present", skill_version is not None)
+    if skill_version:
+        for rel in (".claude-plugin/marketplace.json",
+                    ".claude-plugin/plugin.json",
+                    ".cursor-plugin/plugin.json", "package.json",
+                    ".agents/plugins/marketplace.json",
+                    "plugins/persian-colloquial/.codex-plugin/plugin.json"):
+            content = (ROOT / rel).read_text(encoding="utf-8")
+            versions = re.findall(r'"version"\s*:\s*"([^"]+)"', content)
+            check(f"version matches in {rel}",
+                  versions and all(v == skill_version for v in versions),
+                  f"found {versions}, want {skill_version}")
+
     for rel in ("references/verb-tables.md", "references/verb-tables-full.md",
                 "references/word-pairs.md", "references/discourse-markers.md",
                 "references/chat-style.md", "references/register-levels.md",
@@ -96,7 +114,7 @@ def main():
     # Register checker smoke test on two known texts.
     checker = SKILL_DIR / "scripts" / "check_register.py"
     cases = [
-        ("من فردا به دانشگاه می‌روم و اگر استاد بیاید، می‌خواهم درباره پروژه با او صحبت کنم.", 0, 20),
+        ("من فردا به دانشگاه می‌روم و اگر استاد بیاید، می‌خواهم درباره پروژه با او صحبت کنم. استاد گزارش را خواهد خواند.", 0, 20),
         ("فردا می‌رم دانشگاه، اگه استاد بیاد می‌خوام درباره پروژه باهاش حرف بزنم.", 81, 100),
     ]
     for sample, lo, hi in cases:
@@ -114,11 +132,11 @@ def main():
     suggester = SKILL_DIR / "scripts" / "suggest_register.py"
     example_profile = str(SKILL_DIR / "examples" / "contacts.example.yaml")
     suggest_cases = [
-        (["--text", "سلام چطوری؟ خوبی؟ کجایی؟"], 5),
-        (["--text", "من فردا به دانشگاه می‌روم و اگر استاد بیاید، می‌خواهم درباره پروژه با او صحبت کنم."], 1),
+        (["--incoming", "سلام چطوری؟ خوبی؟ کجایی؟"], 5),
+        (["--incoming", "من فردا به دانشگاه می‌روم و اگر استاد بیاید، می‌خواهم درباره پروژه با او صحبت کنم. استاد گزارش را خواهد خواند."], 2),
         (["--audience", "teacher", "--channel", "email", "--topic", "admin"], 1),
         (["--contact", "مامان", "--profile", example_profile], 5),
-        (["--text", "یه پروپوزال واسه مشتری بنویس",
+        (["--prompt", "یه پروپوزال واسه مشتری بنویس",
           "--deliverable", "proposal"], 2),
         ([], 3),
     ]
@@ -150,18 +168,74 @@ def main():
                 except (json.JSONDecodeError, KeyError):
                     check(f"eval {case['id']}", False,
                           proc.stderr.strip()[:200])
-            elif case["kind"] == "check":
+            elif case["kind"] in ("check", "check-absent",
+                                  "check-score", "check-span-absent"):
                 proc = subprocess.run(
                     [sys.executable, str(checker), "--text", case["text"],
-                     "--json"], capture_output=True, text=True)
+                     *case.get("args", []), "--json"],
+                    capture_output=True, text=True)
                 try:
-                    kinds = [i["kind"] for i in
-                             json.loads(proc.stdout)["issues"]]
-                    check(f"eval {case['id']} flags {case['expect_issue']}",
-                          case["expect_issue"] in kinds, f"got {kinds}")
-                except (json.JSONDecodeError, KeyError):
+                    out = json.loads(proc.stdout)
+                except json.JSONDecodeError:
                     check(f"eval {case['id']}", False,
                           proc.stderr.strip()[:200])
+                    continue
+                if case["kind"] == "check":
+                    kinds = [i["kind"] for i in out["issues"]]
+                    check(f"eval {case['id']} flags {case['expect_issue']}",
+                          case["expect_issue"] in kinds, f"got {kinds}")
+                elif case["kind"] == "check-absent":
+                    kinds = [i["kind"] for i in out["issues"]]
+                    check(f"eval {case['id']} omits {case['expect_issue']}",
+                          case["expect_issue"] not in kinds, f"got {kinds}")
+                elif case["kind"] == "check-score":
+                    score = out["score"]
+                    check(f"eval {case['id']} score in "
+                          f"[{case['expect_min']},{case['expect_max']}]",
+                          case["expect_min"] <= score <= case["expect_max"],
+                          f"got {score}")
+                elif case["kind"] == "check-span-absent":
+                    spans = [s["text"] for s in out["colloquial_spans"]]
+                    check(f"eval {case['id']} omits span "
+                          f"{case['expect_word']}",
+                          case["expect_word"] not in spans, f"got {spans}")
+
+    # Profile round-trip: --set writes, --contact reads back.
+    with tempfile.TemporaryDirectory() as tmp:
+        profile = Path(tmp) / "contacts.yaml"
+        proc = subprocess.run(
+            [sys.executable, str(suggester), "--set", "مامان:5",
+             "--profile", str(profile)],
+            capture_output=True, text=True)
+        check("--set writes a profile", proc.returncode == 0
+              and profile.exists(), proc.stderr.strip()[:200])
+        proc = subprocess.run(
+            [sys.executable, str(suggester), "--contact", "مامان",
+             "--profile", str(profile), "--json"],
+            capture_output=True, text=True)
+        try:
+            got = json.loads(proc.stdout)["level"]
+            check("profile round-trip reads back level 5", got == 5,
+                  f"got {got}")
+        except (json.JSONDecodeError, KeyError):
+            check("profile round-trip", False, proc.stderr.strip()[:200])
+
+    # Rhythm flag: flat sentences are reported.
+    proc = subprocess.run(
+        [sys.executable, str(checker), "--text",
+         "این یک جمله نسبتاً طولانی است که درباره موضوع صحبت می‌کند. "
+         "این یک جمله نسبتاً طولانی است که درباره موضوع صحبت می‌کند. "
+         "این یک جمله نسبتاً طولانی است که درباره موضوع صحبت می‌کند. "
+         "این یک جمله نسبتاً طولانی است که درباره موضوع صحبت می‌کند.",
+         "--rhythm", "--json"],
+        capture_output=True, text=True)
+    try:
+        rhythm = json.loads(proc.stdout)["rhythm"]
+        check("--rhythm flags flat rhythm",
+              any("flat rhythm" in line for line in rhythm),
+              f"got {rhythm}")
+    except (json.JSONDecodeError, KeyError):
+        check("--rhythm", False, proc.stderr.strip()[:200])
 
     print(f"\n{len(FAILURES)} failure(s)" if FAILURES else "\nAll checks passed.")
     return 1 if FAILURES else 0

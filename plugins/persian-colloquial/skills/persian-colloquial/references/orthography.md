@@ -53,7 +53,11 @@ grammatical («این کتاب است»), ـه is right. If it breaks («کتا�
 the word needs a kasre (usually unwritten: کتاب من) or an explicit
 ـِ in careful writing. Iranians treat this error as a mark of
 carelessness. The checker flags the pattern «word+ه + possessive
-pronoun» as probable هکسره.
+pronoun» as probable هکسره, and «known stem+ه + adjective or noun»
+(ماشینه سفید، کتابه خوب) as possible هکسره. The second pattern is
+heuristic: words that genuinely end in ه (خانه، دسته، دانشگاه) are
+excluded, but a false positive is still possible, so
+possible-hekasre means "check this", not "this is wrong".
 
 ## Tanvin
 

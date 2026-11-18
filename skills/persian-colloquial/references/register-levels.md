@@ -22,7 +22,8 @@ Formal is not bureaucratic, even here: use است, می‌شود, and شد, neve
 می‌باشد, می‌گردد, or گردید. An admin letter (نامه اداری) carries a
 موضوع line, an honorific address (جناب آقای / سرکار خانم + surname),
 «با سلام و احترام؛», one request, and a formal closer («با تشکر و
-احترام»). Use احتراماً at most once.
+احترام»). Avoid opening with احتراماً; it reads as outdated
+bureaucratic style.
 
 ## Level 2 — Formal
 
@@ -32,10 +33,10 @@ unattached (خوب است, not خوبه). No اگه, no واسه, no رو.
 
 ## Level 3 — Semi-formal
 
-The middle ground. Colloquial verbs are allowed (می‌رم, می‌خوام) but
-sparingly, mixed with formal connectors. را may stay را or become رو;
-keep it consistent within one message. Address stays شما. One discourse
-marker at most (خب to open), no slang, no آخه, no بابا.
+The middle ground. Mostly full verb forms with polite, plain
+vocabulary; an occasional contracted verb is fine, but را stays را
+and no یه, رو, or slang. Address stays شما. One discourse marker at
+most (خب to open), no آخه, no بابا.
 
 ## Level 4 — Mild colloquial
 
@@ -56,13 +57,17 @@ Finglish when the other person uses it, and the loose chat spelling
 Asking to move tomorrow's meeting to another day:
 
 **1 — Very formal:**
-احتراماً، با توجه به برنامه کاری اینجانب، خواهشمند است در صورت امکان، جلسه فردا به زمان دیگری موکول شود.
+موضوع: درخواست تغییر زمان جلسه
+جناب آقای محمدی
+با سلام و احترام؛
+با توجه به برنامه کاری اینجانب، خواهشمند است در صورت امکان، جلسه فردا به زمان دیگری موکول شود.
+با تشکر و احترام
 
 **2 — Formal:**
 سلام، می‌خواستم بپرسم آیا امکان دارد جلسه فردا را به روز دیگری منتقل کنیم؟ ممنون می‌شوم.
 
 **3 — Semi-formal:**
-سلام، می‌خواستم بپرسم می‌شه جلسه فردا رو به یه روز دیگه منتقل کنیم؟ ممنون می‌شم.
+سلام، می‌خواستم بپرسم می‌شود جلسه فردا را به روز دیگری منتقل کنیم؟ ممنون می‌شوم.
 
 **4 — Mild colloquial:**
 سلام، ببخشید، می‌تونیم جلسه فردا رو بندازیم یه روز دیگه؟ خیلی ممنون می‌شم.
@@ -72,5 +77,5 @@ Asking to move tomorrow's meeting to another day:
 
 Notice what changes between levels: the verb forms contract (می‌شود ←
 می‌شه), the object marker shortens (را ← رو), the opener softens
-(احتراماً ← راستی), and the closer loosens (ممنون می‌شوم ← دمت گرم).
-The facts stay identical.
+(با سلام و احترام ← راستی), and the closer loosens (ممنون می‌شوم ←
+دمت گرم). The facts stay identical.

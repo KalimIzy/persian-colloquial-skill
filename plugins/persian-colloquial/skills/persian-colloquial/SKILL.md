@@ -14,9 +14,11 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 - Before writing, decide which of the five levels in [register-levels.md](references/register-levels.md) the text needs: 1 very formal, 2 formal, 3 semi-formal, 4 mild colloquial, 5 full colloquial.
 
-- Run `scripts/suggest_register.py` with whatever you know: `--text` for the incoming message to mirror, `--audience` and `--channel` for who and where, `--topic` for what, and `--contact` with `--profile` for a stored preference. Follow the level it returns, and read its reasons.
+- Run `scripts/suggest_register.py` with whatever you know: `--incoming` for the message to mirror, `--audience` and `--channel` for who and where, `--topic` for what, and `--contact` with `--profile` for a stored preference. Follow the level it returns, and read its reasons.
 
 - When the user asks for an artifact (a proposal, a letter, a caption), pass `--deliverable` and classify the artifact, not the tone of the request: a casual «یه پروپوزال بنویس» still needs a formal proposal. Mirroring applies to replies, not artifacts.
+
+- Never mirror the user's own request: pass it with `--prompt`, which the script records but never scores. The user may ask casually for a formal text, and that must not drag the reply colloquial.
 
 - The decision order is fixed: an explicit level beats everything, then the deliverable type, then the live message beats the stored profile, then the profile beats the audience and channel matrix, and level 3 is the default when nothing is known. See [register-decision.md](references/register-decision.md).
 
@@ -26,9 +28,9 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 ## Convert verbs and the copula
 
-- Convert present tense verbs with the colloquial stems and endings in [verb-tables.md](references/verb-tables.md), using می‌رم for می‌روم and می‌خوام for می‌خواهم.
+- Convert present tense verbs with the colloquial stems and endings in [verb-tables.md](references/verb-tables.md), using می‌رم for می‌روم and می‌خوام for می‌خواهم. The full table of 341 infinitives is in [verb-tables-full.md](references/verb-tables-full.md).
 
-- Use the ن ending for the third person plural, as in می‌رن and رفتن, and keep the ین variant only when the user already uses it.
+- Use the ن ending for the third person plural, as in می‌رن and رفتن. The ین ending (می‌رین، رفتین) is second person plural (شما), not third person; never use it for اونا.
 
 - Attach the copula to the previous word, turning است into ـه, as in خوبه for خوب است and سرده for سرد است.
 
@@ -74,7 +76,7 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 - Use آخه to explain a reason the listener should already see, and use مگه to ask a surprised question.
 
-- Break long sentences into short ones, drop subjects the listener can recover, and let one thought run across two short messages in chat.
+- Break long sentences into short ones, drop subjects the listener can recover, and let one thought run across two short messages in chat. See [chat-style.md](references/chat-style.md) for chat conventions and [before-after.md](examples/before-after.md) for worked examples.
 
 - Write contractions the way people type them in chat, such as میرم for می‌رم, and accept that informal spelling has no single standard.
 
@@ -110,9 +112,9 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 ## Check the result with the script
 
-- Run `scripts/check_register.py` on the converted text before sending it, passing the text with `--text` or a file path.
+- Run `scripts/check_register.py` on the converted text before sending it, passing the text with `--text` or a file path. Pass `--register` with the target level (1-5) when you know it: at levels 4-5 the checker skips the missing-tanvin check, since colloquial writing does not use tanvin.
 
-- Read the colloquial score and the verdict, and expect a friendly chat message to score above 55 and a formal text to score below 35.
+- Read the colloquial score and the verdict, and expect a friendly chat message to score above 55 and a formal text to score below 35. Scores from fewer than 4 markers are shrunk toward 50 and labeled a weak signal, so read the marker counts too: one colloquial word in a long formal text is not a colloquial text.
 
 - Fix the flagged formal spans the script lists, then run the script again until the score matches the target register.
 
@@ -120,18 +122,12 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 - Report the score and the verdict to the user when they ask for a check, along with the two or three strongest markers found.
 
-## Available connectors
-
-- Use `muse.connector_search` to find other connectors and `muse.skill_search` to find related skills.
-
-- If nothing here fits, look on the web for a maintained API or MCP server and set it up with [Custom Connectors and MCPs](/opt/muse/skills/custom-connector-setup/SKILL.md), or build a custom connector.
-
 ## Alternatives for better results
 
-- Ask the user for a sample of their own writing and match its register with the voice_match_writing skill instead of a generic colloquial voice.
+- Ask the user for a sample of their own writing and match its register instead of a generic colloquial voice.
 
 - Generate the text in formal Persian first and convert it in a second pass when the content is complex, since drafting and converting at once invites mixed register.
 
 - Keep a short list of the user's own frequent phrases and reuse them, since a personal stock of phrases reads as more natural than textbook colloquial forms.
 
-- Use the humanize_text skill on English passages in the same text, and convert the Persian parts with this skill, when a message mixes both languages.
+- When a message mixes Persian and English, convert the Persian parts with this skill and leave the English parts in their own register.

@@ -23,13 +23,13 @@ Colloquial:
 The skill does not only convert — it decides which register fits. Five levels, from very formal to full colloquial, and a decision engine that combines the incoming message (mirroring), a stored contact profile, and an audience × channel matrix:
 
 ```bash
-python skills/persian-colloquial/scripts/suggest_register.py --text "سلام چطوری؟ خوبی؟"
+python skills/persian-colloquial/scripts/suggest_register.py --incoming "سلام چطوری؟ خوبی؟"
 python skills/persian-colloquial/scripts/suggest_register.py --audience teacher --channel email --topic admin
 python skills/persian-colloquial/scripts/suggest_register.py --contact مامان --profile contacts.yaml
-python skills/persian-colloquial/scripts/suggest_register.py --text "یه پروپوزال واسه مشتری بنویس" --deliverable proposal
+python skills/persian-colloquial/scripts/suggest_register.py --prompt "یه پروپوزال واسه مشتری بنویس" --deliverable proposal
 ```
 
-The deliverable type beats the request tone (a casual request for a proposal still needs a formal proposal); the live message beats the stored profile, the profile beats the matrix, and level 3 (semi-formal) is the safe default when nothing is known. See `references/register-decision.md` for the full rules and `references/register-levels.md` for what each level sounds like.
+The deliverable type beats the request tone (a casual request for a proposal still needs a formal proposal); the live message beats the stored profile, the profile beats the matrix, and level 3 (semi-formal) is the safe default when nothing is known. The user's own request (`--prompt`) is never mirrored: asking casually for a formal text must not drag the reply colloquial. See `references/register-decision.md` for the full rules and `references/register-levels.md` for what each level sounds like.
 
 ## What is inside
 
@@ -101,11 +101,11 @@ python skills/persian-colloquial/scripts/check_register.py --text "..." --json
 | --- | --- | --- |
 | 0–20 | Formal | Essay, news, official message |
 | 21–40 | Mostly formal | Careful email, lecture |
-| 41–60 | Mixed | Check for accidental register jumps |
+| 41–60 | Semi-formal | Polite work chat; a mid-range score can also mean mixed register, so check the spans |
 | 61–80 | Colloquial | Friendly chat, voice message |
 | 81–100 | Heavily colloquial | Close friends, slang-heavy chat |
 
-The checker counts colloquial markers (informal verb forms, informal words, discourse markers, possessive endings) against formal markers (full verb forms, `را`, `است`, `زیرا`, `بسیار`) and reports the spans it found, so you can see exactly what pushed the score.
+The checker counts colloquial markers (informal verb forms, informal words, discourse markers, possessive endings) against formal markers (full verb forms, `را`, `است`, `زیرا`, `بسیار`) and reports the spans it found, so you can see exactly what pushed the score. Scores from fewer than 4 markers are shrunk toward 50 and labeled a weak signal. Pass `--register` with the target level (1–5) when checking against one: at levels 4–5 the missing-tanvin check is skipped, since colloquial writing does not use tanvin.
 
 ## Verb coverage
 
@@ -117,6 +117,7 @@ The checker counts colloquial markers (informal verb forms, informal words, disc
 - **Politeness is not formality.** Colloquial `شما` with plural verbs (`شما می‌خواین؟`) is polite. The skill keeps them separate.
 - Colloquial Persian has **no single enforced spelling standard**. `می‌رم` and `میرم` are the same word; the skill accepts both and never calls one wrong.
 - Register is a **continuum**, not a switch. Real speakers mix features; the skill teaches consistency, not purity.
+- The checker is **token-based**: it cannot see multi-word verb forms (`رفته است`, `دارم می‌روم`), and its هکسره detection is heuristic — `possible-hekasre` means "check this", not "this is wrong".
 
 ## Sources and credits
 
