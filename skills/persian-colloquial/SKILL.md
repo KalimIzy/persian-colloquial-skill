@@ -3,7 +3,7 @@ name: persian-colloquial
 description: Convert formal Persian to widely understood Tehran-based colloquial Persian, choose the right register for the audience and channel, and check the register of Persian text. Use when writing or rewriting Persian chat messages, captions, dialogue, or voice message transcripts in a natural spoken style, or when checking whether Persian text reads formal or colloquial.
 license: MIT
 metadata:
-  version: "1.2.0"
+  version: "1.0.0"
 ---
 
 # Colloquial Persian
