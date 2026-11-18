@@ -17,9 +17,11 @@ a compound:
 - کتاب‌ها, بزرگ‌تر, خانه‌ام, به‌عنوان
 - فراگرفتن, بازنویسی (compounds join; فرا گرفتن splits them)
 
-In chat at levels 4–5, attached spellings without ZWNJ (میرم) are
-accepted as typing, not as correct spelling. The checker reports a
-standalone می/نمی followed by a space as a missing ZWNJ at any level.
+In colloquial output (levels 4–5), the می/نمی prefix attaches to the
+verb (میرم، میخوام، میشه): that is the default, the way people type.
+The ZWNJ form (می‌رم) is the careful variant for edited text. The
+checker accepts both and never flags either. A standalone می/نمی
+followed by a space is still a missing ZWNJ at any level.
 
 ## Persian characters only
 

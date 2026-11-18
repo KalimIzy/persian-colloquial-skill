@@ -20,7 +20,7 @@ Function: closes a topic, marks something as settled, or adds a sense of
 "already" or "anyway". Often softens a request or a refusal.
 
 - Formal: دیگر نمی‌خواهم در این باره صحبت کنم.
-- Colloquial: دیگه نمی‌خوام درباره‌ش حرف بزنم.
+- Colloquial: دیگه نمیخوام درباره‌ش حرف بزنم.
 
 ## آخه (ākhe)
 
@@ -28,7 +28,7 @@ Function: explains a reason the listener should already see, often with
 a touch of complaint or surprise. It introduces a justification.
 
 - Formal: نمی‌توانم بیایم، زیرا کار دارم.
-- Colloquial: آخه کار دارم، نمی‌تونم بیام.
+- Colloquial: آخه کار دارم، نمیتونم بیام.
 
 ## که (ke)
 
@@ -37,7 +37,7 @@ sentence as obvious or already known. At the end of a sentence it can
 soften a statement into shared knowledge.
 
 - Formal: می‌دانم که می‌آیی.
-- Colloquial: می‌دونم که میای دیگه.
+- Colloquial: میدونم که میای دیگه.
 
 ## بابا (bābā)
 
@@ -53,7 +53,7 @@ Function: "by God", used to insist that something is true, or to shrug
 and say "I really do not know". Very frequent in speech.
 
 - Formal: واقعا نمی‌دانم.
-- Colloquial: والا نمی‌دونم.
+- Colloquial: والا نمیدونم.
 
 ## راستی (rāsti)
 
@@ -69,7 +69,7 @@ Function: "I mean", clarifies or restates what the speaker just said.
 In fast speech it shortens to ینی.
 
 - Formal: منظورم این است که دیر می‌رسم.
-- Colloquial: یعنی دیر می‌رسم، ینی حدود ساعت هشت.
+- Colloquial: یعنی دیر میرسم، ینی حدود ساعت هشت.
 
 ## مگه (mage)
 
@@ -77,7 +77,7 @@ Function: asks a surprised question, often expecting the answer no.
 It challenges an assumption the listener seems to hold.
 
 - Formal: آیا واقعا نمی‌دانستی؟
-- Colloquial: مگه نمی‌دونستی؟
+- Colloquial: مگه نمیدونستی؟
 
 ## اصلا (aslan)
 
@@ -101,7 +101,7 @@ Function: "hey", calls someone or expresses mild surprise. Short and
 informal, mostly used between friends.
 
 - Formal: سلام، آیا می‌توانی کمکم کنی؟
-- Colloquial: هی، می‌تونی کمکم کنی؟
+- Colloquial: هی، میتونی کمکم کنی؟
 
 ## وای (vāy)
 

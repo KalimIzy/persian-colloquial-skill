@@ -23,4 +23,8 @@
   from fewer than 4 markers as weak signals; the suggester takes
   --incoming and --prompt separately and needs admin markers for
   level 1. Evals grew from 8 to 30 cases, including negative tests.
+- Default colloquial spelling is attached (میرم، میخوام، میشه),
+  matching real usage: wordfreq data (November 2026) shows میرم
+  outnumbers می‌رم by about 30 to 1. The ZWNJ form remains the
+  careful variant for edited text; the checker accepts both.
 - Packaged to the Agent Skills open standard: YAML frontmatter, `skills/persian-colloquial/` layout, Claude Code and Cursor plugin manifests, Codex marketplace copy, and a CI validation workflow.

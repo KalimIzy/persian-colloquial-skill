@@ -12,7 +12,7 @@ single sentence often splits across two or three messages. Subjects
 disappear when the listener can recover them from the verb ending.
 
 - Formal: من فردا به دانشگاه می‌روم و کتاب را برمی‌گردانم.
-- Chat: فردا می‌رم دانشگاه. کتابو برمی‌گردونم.
+- Chat: فردا میرم دانشگاه. کتابو برمیگردونم.
 
 ## Abbreviations and clipped words
 
@@ -21,14 +21,14 @@ and look natural; spelling them out looks careful or distant.
 
 - ممنون becomes مرسی
 - خداحافظ becomes خدافظ or بای
-- می‌خواهم becomes می‌خوام
+- می‌خواهم becomes میخوام
 - بفرمایید becomes بفرما (between friends)
 - سلام becomes سلاام for emphasis, stretching the vowel
 
 ## Finglish (Latin-script Persian)
 
 Many Iranians type Persian in Latin letters, especially in fast chat.
-There is no standard for Finglish spelling: می‌خوام appears as mikham,
+There is no standard for Finglish spelling: میخوام appears as mikham,
 mikhaam, or mikhām. When the user writes in Finglish, match their
 spelling habits rather than imposing a system. Persian script remains
 the default for your own replies unless the user writes in Finglish.
@@ -50,18 +50,19 @@ replaces the words themselves, and formal messages use none.
 ## Half-space variation
 
 Formal Persian uses the half-space (نیم‌فاصله) inside words such as
-می‌روم and کتاب‌ها. Informal writing varies widely: می‌رم, میرم, and
-میرم all appear, and کتاب‌ها appears as کتابا or کتاب ها. None of
-these is wrong in chat. Pick one style per text and keep it steady,
-and never mix half-space and no-space spellings of the same word in
-one message.
+می‌روم and کتاب‌ها. In colloquial writing the verb prefix attaches:
+میرم، میخوام، میشه. The ZWNJ form (می‌رم) is the careful variant for
+edited text, not the default. کتاب‌ها appears as کتابا or کتاب ها in
+chat. None of these is wrong in chat. Pick one style per text and
+keep it steady, and never mix attached and half-space spellings of
+the same word in one message.
 
 ## Common informal spellings
 
 | Formal spelling | Common chat spelling |
 | --- | --- |
-| می‌روم | میرم or می‌رم |
-| می‌خواهم | میخوام or می‌خوام |
+| می‌روم | میرم (careful: می‌رم) |
+| می‌خواهم | میخوام (careful: می‌خوام) |
 | کتاب‌ها | کتابا |
 | خانه | خونه |
 | آن‌ها | اونا |
@@ -77,13 +78,13 @@ corrections, and fillers such as اه and ام. A transcript of a voice
 message keeps one or two of these and drops the rest, since a fully
 cleaned transcript reads as written, not spoken.
 
-- Raw: اه، ببین، من... من فردا، یعنی... نمی‌تونم بیام، آخه کار دارم.
-- Cleaned transcript: ببین، من فردا نمی‌تونم بیام، آخه کار دارم.
+- Raw: اه، ببین، من... من فردا، یعنی... نمیتونم بیام، آخه کار دارم.
+- Cleaned transcript: ببین، من فردا نمیتونم بیام، آخه کار دارم.
 
 ## What to expect in real chats
 
 - Greetings are short: سلام, خوبی؟, چطوری؟, چه خبر؟
-- Goodbyes are short: خدافظ, بای, می‌بینمت, فعلا.
+- Goodbyes are short: خدافظ, بای, میبینمت, فعلا.
 - Questions often drop the question word order: میای؟ instead of آیا می‌آیی؟
 - Repetition adds warmth: ممنون ممنون, باشه باشه, آره آره.
 - Typos are common and usually ignored; correcting them mid-chat reads as formal.

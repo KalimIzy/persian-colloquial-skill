@@ -42,15 +42,16 @@ most (خب to open), no آخه, no بابا.
 
 Full colloquial grammar — contracted verbs, attached copula (خوبه),
 رو, اون, اگه, واسه — but polite address: شما with plural verbs
-(شما می‌خواین؟), no تو, no slang closers. This is the level for
+(شما میخواین؟), no تو, no slang closers. This is the level for
 older family, teachers outside class, and friendly customers.
 
 ## Level 5 — Full colloquial
 
 Everything from level 4 plus تو, slang and closers (دمت گرم, مرسی),
 the fixed pair خب دیگه (stacking other markers still reads as noise),
-Finglish when the other person uses it, and the loose chat spelling
-(میرم for می‌رم). Only for people you are close to.
+Finglish when the other person uses it, and the attached chat spelling
+(میرم، میخوام، میشه; the ZWNJ form می‌رم is the careful variant).
+Only for people you are close to.
 
 ## The same message at all five levels
 
@@ -70,12 +71,12 @@ Asking to move tomorrow's meeting to another day:
 سلام، می‌خواستم بپرسم می‌شود جلسه فردا را به روز دیگری منتقل کنیم؟ ممنون می‌شوم.
 
 **4 — Mild colloquial:**
-سلام، ببخشید، می‌تونیم جلسه فردا رو بندازیم یه روز دیگه؟ خیلی ممنون می‌شم.
+سلام، ببخشید، میتونیم جلسه فردا رو بندازیم یه روز دیگه؟ خیلی ممنون میشم.
 
 **5 — Full colloquial:**
-راستی جلسه فردا رو می‌تونیم بندازیم یه روز دیگه؟ دمت گرم.
+راستی جلسه فردا رو میتونیم بندازیم یه روز دیگه؟ دمت گرم.
 
 Notice what changes between levels: the verb forms contract (می‌شود ←
-می‌شه), the object marker shortens (را ← رو), the opener softens
+میشه), the object marker shortens (را ← رو), the opener softens
 (با سلام و احترام ← راستی), and the closer loosens (ممنون می‌شوم ←
 دمت گرم). The facts stay identical.

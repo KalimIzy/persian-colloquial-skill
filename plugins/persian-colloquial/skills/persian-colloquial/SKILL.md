@@ -28,9 +28,11 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 ## Convert verbs and the copula
 
-- Convert present tense verbs with the colloquial stems and endings in [verb-tables.md](references/verb-tables.md), using می‌رم for می‌روم and می‌خوام for می‌خواهم. The full table of 341 infinitives is in [verb-tables-full.md](references/verb-tables-full.md).
+- Convert present tense verbs with the colloquial stems and endings in [verb-tables.md](references/verb-tables.md), using میرم for می‌روم and میخوام for می‌خواهم. The full table of 341 infinitives is in [verb-tables-full.md](references/verb-tables-full.md).
 
-- Use the ن ending for the third person plural, as in می‌رن and رفتن. The ین ending (می‌رین، رفتین) is second person plural (شما), not third person; never use it for اونا.
+- Write colloquial verb prefixes attached (میرم، میخوام، میشه), the way people type. The ZWNJ form (می‌رم) is the careful variant for edited text, not the default. Formal verbs keep the ZWNJ (می‌روم، می‌خواهم، می‌شود).
+
+- Use the ن ending for the third person plural, as in میرن and رفتن. The ین ending (میرین، رفتین) is second person plural (شما), not third person; never use it for اونا.
 
 - Attach the copula to the previous word, turning است into ـه, as in خوبه for خوب است and سرده for سرد است.
 
@@ -78,7 +80,7 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 - Break long sentences into short ones, drop subjects the listener can recover, and let one thought run across two short messages in chat. See [chat-style.md](references/chat-style.md) for chat conventions and [before-after.md](examples/before-after.md) for worked examples.
 
-- Write contractions the way people type them in chat, such as میرم for می‌رم, and accept that informal spelling has no single standard.
+- Write contractions the way people type them in chat, such as میرم for میرم, and accept that informal spelling has no single standard.
 
 - Match the script the user writes in, using Finglish only when they do, and use Persian script otherwise.
 
@@ -98,7 +100,7 @@ Convert formal Persian to widely understood Tehran-based colloquial Persian, and
 
 - Pick one level of formality for the whole text and keep it, since mixing اگه with دارید in one sentence sounds uncertain.
 
-- Keep شما and plural verb endings for polite address, and use colloquial verbs with them, as in شما می‌خواین, since politeness is not the same as formality.
+- Keep شما and plural verb endings for polite address, and use colloquial verbs with them, as in شما میخواین, since politeness is not the same as formality.
 
 - Do not repeat شما when the verb already carries the person: «می‌توانید فایل را حذف کنید», not «شما می‌توانید فایل را حذف کنید». Repeated شما reads as translated English.
 

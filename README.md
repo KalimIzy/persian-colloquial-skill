@@ -6,7 +6,7 @@ Convert formal Persian into widely understood Tehran colloquial Persian, and che
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
 ![Verbs: 341](https://img.shields.io/badge/Verbs-341-orange.svg)
 
-Formal Persian and spoken Persian are not the same language with different spelling. Verbs contract (`می‌روم` → `می‌رم`), the copula attaches (`خوب است` → `خوبه`), the object marker shrinks (`را` → `رو`), vowels shift (`خانه` → `خونه`), and whole words change (`اگر` → `اگه`, `برای` → `واسه`). This skill teaches an agent all of it, with rules grounded in real data instead of vibes.
+Formal Persian and spoken Persian are not the same language with different spelling. Verbs contract (`می‌روم` → `میرم`), the copula attaches (`خوب است` → `خوبه`), the object marker shrinks (`را` → `رو`), vowels shift (`خانه` → `خونه`), and whole words change (`اگر` → `اگه`, `برای` → `واسه`). This skill teaches an agent all of it, with rules grounded in real data instead of vibes.
 
 ## Quick example
 
@@ -90,7 +90,7 @@ codex plugin marketplace add KalimIzy/persian-colloquial-skill
 **Register checker only:** no install needed, Python 3.9+ and nothing else.
 
 ```bash
-python skills/persian-colloquial/scripts/check_register.py --text "نمی‌دونم اونا می‌تونن این مشکلو حل کنن یا نه."
+python skills/persian-colloquial/scripts/check_register.py --text "نمیدونم اونا میتونن این مشکلو حل کنن یا نه."
 python skills/persian-colloquial/scripts/check_register.py message.txt
 python skills/persian-colloquial/scripts/check_register.py --text "..." --json
 ```
@@ -114,8 +114,8 @@ The checker counts colloquial markers (informal verb forms, informal words, disc
 ## What this skill does not do
 
 - It targets **Tehran-based colloquial Persian**, the variety heard in national media. Dari, Tajik, and regional Iranian varieties differ and are not covered.
-- **Politeness is not formality.** Colloquial `شما` with plural verbs (`شما می‌خواین؟`) is polite. The skill keeps them separate.
-- Colloquial Persian has **no single enforced spelling standard**. `می‌رم` and `میرم` are the same word; the skill accepts both and never calls one wrong.
+- **Politeness is not formality.** Colloquial `شما` with plural verbs (`شما میخواین؟`) is polite. The skill keeps them separate.
+- Colloquial Persian has **no single enforced spelling standard**. `میرم` and `می‌رم` are the same word; the skill accepts both and never calls one wrong. Output uses the attached form (`میرم`), the way people actually type: in real usage it outnumbers the ZWNJ form by roughly 30 to 1 (wordfreq data, November 2026).
 - Register is a **continuum**, not a switch. Real speakers mix features; the skill teaches consistency, not purity.
 - The checker is **token-based**: it cannot see multi-word verb forms (`رفته است`, `دارم می‌روم`), and its هکسره detection is heuristic — `possible-hekasre` means "check this", not "this is wrong".
 
