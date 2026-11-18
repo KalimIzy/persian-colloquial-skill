@@ -1,0 +1,5 @@
+name: "persian_colloquial"
+title: "Colloquial Persian"
+description: "Convert formal Persian to widely understood Tehran-based colloquial Persian and check the register of Persian text."
+category: "Work and knowledge"
+include_in_prompt: false
